@@ -1,0 +1,10 @@
+[package]
+name = "img-download"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+tempfile = "3.3.0"
+error-chain = "0.12.4"
+reqwest = "0.13"
+tokio = {version = "1.0", features = ["macros", "rt-multi-thread"]}
