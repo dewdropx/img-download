@@ -1,8 +1,9 @@
-use error_chain::error_chain;
-use std::io::Write;
-use std::fs::File;
-use tempfile::Builder;
+use error_chain::error_chain; // handle errors
+use std::io::Write; // standard io write
+use std::fs::File; // file system
+use tempfile::Builder; // creating temp directory
 
+// error handling
 error_chain! {
     foreign_links {
         Io(std::io::Error);
@@ -10,14 +11,18 @@ error_chain! {
     }
 }
 
+// set up tokio run time for asynchronous main function
 #[tokio::main]
 async fn main() -> Result<()> {
-    let tmp_dir = Builder::new().prefix("example").tempdir()?;
+
+    // send get request for image
+    let tmp_dir = Builder::new().prefix("example").tempdir()?; // create temp directory
     let target = "https://www.rust-lang.org/logos/rust-logo-512x512.png";
     let response = reqwest::get(target)
         .await?
         .error_for_status()?;
 
+    // determine file name and create destination file
     let mut dest = {
         let fname = response
             .url()
@@ -33,6 +38,7 @@ async fn main() -> Result<()> {
         File::create(fname)?;
     };
 
+    // write contents from the response to destination
     let content = response.bytes().await?;
     dest.write_all(&content)?;
 
